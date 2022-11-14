@@ -29,9 +29,12 @@ namespace LibraryMetadata
                         .Distinct();
                     foreach (var t in allTypes)
                     {
+                        bool isOnlyExtasionMethods = true;
+                       
+
                         var typeTreeViewItem = new TreeViewItem();
                         typeTreeViewItem.Header = t.Name;
-                        namespaceTreeViewItem.Items.Add(typeTreeViewItem);
+                        
                         
 
                         var allFields = t.GetFields(
@@ -41,6 +44,7 @@ namespace LibraryMetadata
                             BindingFlags.Static);
                         if(allFields != null && allFields.Length > 0)
                         {
+                            isOnlyExtasionMethods = false;
                             var fieldsTreeView = new TreeViewItem();
                             fieldsTreeView.Header = "FIELDS";
                             typeTreeViewItem.Items.Add(fieldsTreeView);
@@ -58,6 +62,7 @@ namespace LibraryMetadata
                             BindingFlags.Static);
                         if (allProps != null && allProps.Length > 0)
                         {
+                            isOnlyExtasionMethods = false;
                             var propsTreeView = new TreeViewItem();
                             propsTreeView.Header = "PROPERTIES";
                             typeTreeViewItem.Items.Add(propsTreeView);
@@ -72,9 +77,11 @@ namespace LibraryMetadata
                             BindingFlags.Instance |
                             BindingFlags.Public |
                             BindingFlags.NonPublic |
-                            BindingFlags.Static);
-                        if (allMethods != null && allMethods.Length > 0)
+                            BindingFlags.Static)
+                            .Where(m => !m.IsDefined(typeof(ExtensionAttribute), false));
+                        if (allMethods != null && allMethods.Count() > 0)
                         {
+                            isOnlyExtasionMethods = false;
                             var methodsTreeView = new TreeViewItem();
                             methodsTreeView.Header = "METHODS";
                             typeTreeViewItem.Items.Add(methodsTreeView);
@@ -85,18 +92,23 @@ namespace LibraryMetadata
                         }
 
 
-                        var extansionMethodsForCurrType = GetExtensionMethods(assembly, t);
-                        if (extansionMethodsForCurrType.Count() > 0)
+                        var extensionMethodsForCurrType = GetExtensionMethods(assembly, t);
+                        if (extensionMethodsForCurrType.Count() > 0)
                         {
+                            if (isOnlyExtasionMethods) // if all static class contains only
+                            {                          // extMethods for types from this assembly
+                                continue;
+                            }
                             var ExtMethodsTreeView = new TreeViewItem();
-                            ExtMethodsTreeView.Header = "EXTANSION METHODS";
+                            ExtMethodsTreeView.Header = "EXTENSION METHODS";
                             typeTreeViewItem.Items.Add(ExtMethodsTreeView);
-                            foreach (var ExtMethod in extansionMethodsForCurrType)
+                            foreach (var ExtMethod in extensionMethodsForCurrType)
                             {
                                 ExtMethodsTreeView.Items.Add(ExtMethod);
                             }
                         }
-                        
+                        namespaceTreeViewItem.Items.Add(typeTreeViewItem);
+
                     }
                 }
 

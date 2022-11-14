@@ -19,6 +19,13 @@
             throw new NotImplementedException();
         }
     }
+    public static class Class1Extension
+    {
+        public static void ExtensionMethod(this Class1 class1)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
 namespace SecondNamespace
