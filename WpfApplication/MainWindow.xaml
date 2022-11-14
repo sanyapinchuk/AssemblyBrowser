@@ -10,9 +10,10 @@
         <CommandBinding Command="Open" Executed="OpenLibraryCommandHandler" />
     </Window.CommandBindings>
     <Grid>
-        <TreeView x:Name="Tree" Margin="208,0,0,10" HorizontalContentAlignment="Left">
-            
+        <TreeView x:Name="Tree" Margin="213,0,0,10" HorizontalContentAlignment="Left"
+                  DataContext="{Binding SelectedLibrary}">
+
         </TreeView>
-        <Button x:Name="help2Button" Command="ApplicationCommands.Open" Content="Open lib" HorizontalAlignment="Left" Margin="27,26,0,0" VerticalAlignment="Top" Height="52" Width="127"/>
+        <Button x:Name="help2Button" Command="ApplicationCommands.Open" Content="Open lib" HorizontalAlignment="Left" Margin="48,10,0,0" VerticalAlignment="Top" Height="32" Width="127"/>
     </Grid>
 </Window>

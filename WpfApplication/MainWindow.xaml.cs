@@ -24,6 +24,7 @@ namespace WpfApplication
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ApplicationViewModel();
         }
 
 
@@ -59,6 +60,7 @@ namespace WpfApplication
             }
             //Tree.UpdateLayout();
         }
-        
+
+
     }
 }

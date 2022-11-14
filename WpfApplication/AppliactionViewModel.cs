@@ -1,27 +1,31 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
- 
+using System.Windows.Input;
+
 namespace WpfApplication
 {
     public class ApplicationViewModel : INotifyPropertyChanged
     {
-        private LibraryInfo library;
-
-        public ObservableCollection<LibraryInfo> LibraryInfos { get; set; }
-        public LibraryInfo SelectLibraryInfo
+        private Library selectedLibrary;
+        
+        public ObservableCollection<Library> Libraries { get; set; }
+        public Library SelectedLibrary
         {
-            get { return library; }
+            get { return selectedLibrary; }
             set
             {
-                library = value;
-                OnPropertyChanged("SelectedPhone");
+                selectedLibrary = value;
+                OnPropertyChanged("SelectedLibrary");
             }
         }
 
         public ApplicationViewModel()
         {
-            library = new LibraryInfo();
+            selectedLibrary = new Library();
+            selectedLibrary.Title = "TestLibrary.dll";
+            selectedLibrary.Path = "C:/Users/Asus/Desktop/учеба/спп/3/AssemblyBrowser/TestLibrary/bin/Debug/net6.0";
+            Libraries= new ObservableCollection<Library>() { selectedLibrary };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -30,5 +34,7 @@ namespace WpfApplication
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+
     }
 }
