@@ -48,6 +48,7 @@ namespace WpfApplication
         }
         private void ExtractInfo()
         {
+            Tree.Items.Clear();
             if (String.IsNullOrEmpty(_filename))
                 return;
             IMetadataInformer metadataInformer = new MetadataInformer();

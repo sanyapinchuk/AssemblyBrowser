@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.Windows.Controls;
+using System.Runtime.CompilerServices;
 
 namespace LibraryMetadata
 {
@@ -29,7 +30,6 @@ namespace LibraryMetadata
                     foreach (var t in allTypes)
                     {
                         var typeTreeViewItem = new TreeViewItem();
-                        //typeTreeViewItem.Name = t.Name;
                         typeTreeViewItem.Header = t.Name;
                         namespaceTreeViewItem.Items.Add(typeTreeViewItem);
                         
@@ -39,33 +39,68 @@ namespace LibraryMetadata
                             BindingFlags.Public |
                             BindingFlags.NonPublic |
                             BindingFlags.Static);
-                        foreach(var field in allFields)
+                        if(allFields != null && allFields.Length > 0)
                         {
-                            typeTreeViewItem.Items.Add(field);
+                            var fieldsTreeView = new TreeViewItem();
+                            fieldsTreeView.Header = "FIELDS";
+                            typeTreeViewItem.Items.Add(fieldsTreeView);
+                            foreach (var field in allFields)
+                            {
+                                fieldsTreeView.Items.Add(field);
+                            }
                         }
+
+
                         var allProps = t.GetProperties(
                             BindingFlags.Instance |
                             BindingFlags.Public |
                             BindingFlags.NonPublic |
                             BindingFlags.Static);
-
-                        foreach (var prop in allProps)
+                        if (allProps != null && allProps.Length > 0)
                         {
-                            typeTreeViewItem.Items.Add(prop);
+                            var propsTreeView = new TreeViewItem();
+                            propsTreeView.Header = "PROPERTIES";
+                            typeTreeViewItem.Items.Add(propsTreeView);
+                            foreach (var prop in allProps)
+                            {
+                                propsTreeView.Items.Add(prop);
+                            }
                         }
+
+
                         var allMethods = t.GetMethods(
-                             BindingFlags.Instance |
+                            BindingFlags.Instance |
                             BindingFlags.Public |
                             BindingFlags.NonPublic |
                             BindingFlags.Static);
-                        foreach (var method in allMethods)
+                        if (allMethods != null && allMethods.Length > 0)
                         {
-                            typeTreeViewItem.Items.Add(method);
+                            var methodsTreeView = new TreeViewItem();
+                            methodsTreeView.Header = "METHODS";
+                            typeTreeViewItem.Items.Add(methodsTreeView);
+                            foreach (var method in allMethods)
+                            {
+                                methodsTreeView.Items.Add(method);
+                            }
                         }
+
+
+                        var extansionMethodsForCurrType = GetExtensionMethods(assembly, t);
+                        if (extansionMethodsForCurrType.Count() > 0)
+                        {
+                            var ExtMethodsTreeView = new TreeViewItem();
+                            ExtMethodsTreeView.Header = "EXTANSION METHODS";
+                            typeTreeViewItem.Items.Add(ExtMethodsTreeView);
+                            foreach (var ExtMethod in extansionMethodsForCurrType)
+                            {
+                                ExtMethodsTreeView.Items.Add(ExtMethod);
+                            }
+                        }
+                        
                     }
                 }
 
-
+                
             }
             catch (Exception ex)
             {
@@ -76,7 +111,21 @@ namespace LibraryMetadata
 
             return result;
         }
+
+        private IEnumerable<MethodInfo> GetExtensionMethods(Assembly assembly,
+        Type extendedType)
+        {
+            var query = from type in assembly.GetTypes()
+                        where type.IsSealed && !type.IsGenericType && !type.IsNested
+                        from method in type.GetMethods(BindingFlags.Static
+                            | BindingFlags.Public | BindingFlags.NonPublic)
+                        where method.IsDefined(typeof(ExtensionAttribute), false)
+                        where method.GetParameters()[0].ParameterType == extendedType
+                        select method;
+            return query;
+        }
     }
+    
     public static class MetadataInformerExtensions
     {
         public static string GetTopLevelNamespace(this Type t)
