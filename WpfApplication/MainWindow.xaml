@@ -6,7 +6,13 @@
         xmlns:local="clr-namespace:WpfApplication"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OpenLibraryCommandHandler" />
+    </Window.CommandBindings>
     <Grid>
-
+        <TreeView x:Name="Tree" Margin="208,0,0,10" HorizontalContentAlignment="Left">
+            
+        </TreeView>
+        <Button x:Name="help2Button" Command="ApplicationCommands.Open" Content="Open lib" HorizontalAlignment="Left" Margin="27,26,0,0" VerticalAlignment="Top" Height="52" Width="127"/>
     </Grid>
 </Window>
